@@ -1,6 +1,8 @@
 package com.niteshsynergy.dsa.Week16;
 
 import java.util.Scanner;
+import java.util.stream.IntStream;
+
 /*
 Developed By Nitesh Synergy on 27-08-2025
  */
@@ -15,6 +17,17 @@ public class TrappingRainWater {
             height[i] = sc.nextInt();
         System.out.print("Welcome to Rain Water Trap Solver By Nitesh Synergy");
         System.out.println("Trapped Water: " + trap(height));
+
+
+
+        /*
+        Two Pointers approach → O(1) extra space, best in interviews.
+         Java Stream API is not naturally designed for this,
+         since streams are forward-only (can’t easily look both sides
+         without extra arrays).
+        Stream API approach → O(n) extra space (leftMax[], rightMax[]), but shows Java 8 functional style.
+         */
+
     }
     public static int trap(int[] height) {
 
@@ -39,6 +52,30 @@ public class TrappingRainWater {
             }
         }
         return water;
+    }
+    public static int trapUsingStream(int[] height) {
+        int n = height.length;
+        if (n == 0) return 0;
+
+        int[] leftMax = new int[n];
+        int[] rightMax = new int[n];
+
+        // Compute leftMax
+        leftMax[0] = height[0];
+        for (int i = 1; i < n; i++) {
+            leftMax[i] = Math.max(leftMax[i - 1], height[i]);
+        }
+
+        // Compute rightMax
+        rightMax[n - 1] = height[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            rightMax[i] = Math.max(rightMax[i + 1], height[i]);
+        }
+
+        // Use Stream to calculate trapped water
+        return IntStream.range(0, n)
+                .map(i -> Math.min(leftMax[i], rightMax[i]) - height[i])
+                .sum();
     }
 }
 
